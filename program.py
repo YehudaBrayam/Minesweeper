@@ -29,12 +29,11 @@ linearMineLocation=sample(range(numRow*numCol),numMine)
 
 for i in range(numMine):
     valTable[linearMineLocation[i]//numCol][linearMineLocation[i]%numCol] = 9
-print(valTable)
 
 def end(msg):
     messagebox.showinfo("End of game", msg)
     root.destroy()
-    #quit()
+    quit()
 
 def open0(i,j):
     global clickCounter
