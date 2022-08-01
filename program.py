@@ -1,11 +1,14 @@
 from random import *
 from tkinter import *
 from tkinter import messagebox
+from time import time
 
 root=Tk()
 root.resizable(False,False)
 #keeps window at top
 root.attributes('-topmost', True)
+
+startTime=time()
 
 numRow = int(input("How many rows?:\t\t"))
 numCol = int(input("How many columns?:\t"))
@@ -27,8 +30,10 @@ mineCounter=0
 numMine = (numCol*numRow)//6
 linearMineLocation=sample(range(numRow*numCol),numMine)
 
+mines=[]
 for i in range(numMine):
     valTable[linearMineLocation[i]//numCol][linearMineLocation[i]%numCol] = 9
+    mines.append([linearMineLocation[i]//numCol,linearMineLocation[i]%numCol])
 
 def end(msg):
     messagebox.showinfo("End of game", msg)
@@ -42,7 +47,7 @@ def open0(i,j):
             if (i+a >= 0 and j+b >= 0 and i+a < numRow and j+b < numCol) and (str(btnTable[i+a][j+b]['state'])=="normal") and (str(btnTable[i+a][j+b]['text'])!="*"):
                 btnTable[i+a][j+b].configure(state="disabled")
                 if valTable[i+a][j+b]!=9:
-                    btnTable[i+a][j+b].configure(bg=("gray"+str((90-valTable[i+a][j+b]*5))))
+                    btnTable[i+a][j+b].configure(bg=("gray"+str((90-valTable[i+a][j+b]*7))))
                 if valTable[i+a][j+b]==0:
                     open0(i+a,j+b)
                 else:
@@ -70,7 +75,7 @@ def left_click(event,i,j):
     elif str(btnTable[i][j]['state'])=="normal":
         btnTable[i][j].configure(state="disabled")
         #only opens 8 surrounding boxes
-        btnTable[i][j].configure(bg=("gray"+str((90-valTable[i][j]*5))))
+        btnTable[i][j].configure(bg=("gray"+str((90-valTable[i][j]*7))))
         if valTable[i][j]==0:
             open0(i,j)
         else:
@@ -84,13 +89,13 @@ def middle_click(event,i,j):
 def right_click(event,i,j):
     global mineCounter
     global clickCounter
-    
+
     if str(btnTable[i][j]['state'])=="normal" and btnTable[i][j]["text"]!="*":
-        btnTable[i][j].configure(state="disabled")
+        btnTable[i][j].configure(state="disabled",bg="cyan")
         btnTable[i][j].config(text="*")
         mineCounter+=1
     elif btnTable[i][j]["text"]=="*":
-        btnTable[i][j].configure(state="normal")
+        btnTable[i][j].configure(state="normal", bg="light cyan")
         btnTable[i][j].config(text="")
         mineCounter-=1
     check_win(clickCounter,mineCounter)
@@ -103,6 +108,7 @@ for i in range(numRow):
             btn = Button(root, height=1,width=2)
         else:
             btn = Button(root, height=2,width=4)
+        btn.configure(bg="light cyan")
         btn.grid(row=i+1,column=j)
         # i=i makes sure the i passed isn't the last value of the loop
         btn.bind('<Button-1>',lambda event, i=i, j=j: left_click(event,i,j))
